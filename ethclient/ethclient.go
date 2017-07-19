@@ -209,10 +209,17 @@ func (ec *Client) TransactionReceipt(ctx context.Context, txHash common.Hash) (*
 }
 
 func toBlockNumArg(number *big.Int) string {
-	if number == nil {
+	blockNumber := rpc.BlockNumber(number.Int64())
+	switch blockNumber {
+	case rpc.PendingBlockNumber:
+		return "pending"
+	case rpc.LatestBlockNumber:
 		return "latest"
+	case rpc.EarliestBlockNumber:
+		return "earlist"
+	default:
+		return hexutil.EncodeBig(number)
 	}
-	return hexutil.EncodeBig(number)
 }
 
 type rpcProgress struct {
